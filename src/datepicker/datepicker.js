@@ -35,6 +35,7 @@ angular.module('mgcrea.ngStrap.datepicker', [
       minView: 0,
       startWeek: 0,
       daysOfWeekDisabled: '',
+      excludeWeekends: false,
       iconLeft: 'glyphicon glyphicon-chevron-left',
       iconRight: 'glyphicon glyphicon-chevron-right'
     };
@@ -263,7 +264,7 @@ angular.module('mgcrea.ngStrap.datepicker', [
 
         // Directive options
         var options = {scope: scope, controller: controller};
-        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'autoclose', 'dateType', 'dateFormat', 'modelDateFormat', 'dayFormat', 'strictFormat', 'startWeek', 'startDate', 'useNative', 'lang', 'startView', 'minView', 'iconLeft', 'iconRight', 'daysOfWeekDisabled'], function(key) {
+        angular.forEach(['placement', 'container', 'delay', 'trigger', 'keyboard', 'html', 'animation', 'template', 'autoclose', 'dateType', 'dateFormat', 'modelDateFormat', 'dayFormat', 'strictFormat', 'startWeek', 'startDate', 'useNative', 'lang', 'startView', 'minView', 'iconLeft', 'iconRight', 'daysOfWeekDisabled', 'excludeWeekends'], function(key) {
           if(angular.isDefined(attr[key])) options[key] = attr[key];
         });
 
@@ -487,12 +488,16 @@ angular.module('mgcrea.ngStrap.datepicker', [
             },
             isDisabled: function(date) {
               var time = date.getTime();
+              var day = date.getDay();
 
               // Disabled because of min/max date.
               if (time < options.minDate || time > options.maxDate) return true;
 
               // Disabled due to being a disabled day of the week
               if (options.daysOfWeekDisabled.indexOf(date.getDay()) !== -1) return true;
+
+              // Disabled if excludeWeekends is set
+              if (options.excludeWeekends && (day == 6 || day == 0)) return true;
 
               // Disabled because of disabled date range.
               if (options.disabledDateRanges) {
